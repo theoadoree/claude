@@ -1,0 +1,60 @@
+{
+  "expo": {
+    "name": "TaxTrack",
+    "slug": "taxtrack",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "scheme": "taxtrack",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0C0C0E"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.taxtrack.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "TaxTrack uses your location to automatically log which tax jurisdiction you are in, helping you track days for tax compliance purposes.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "TaxTrack uses your background location to log your jurisdiction throughout the day, even when the app is not open.",
+        "NSLocationAlwaysUsageDescription": "TaxTrack uses your background location to log your jurisdiction throughout the day for tax compliance tracking.",
+        "NSCameraUsageDescription": "TaxTrack uses your camera to capture photos of boarding passes, hotel confirmations, and other travel evidence.",
+        "NSPhotoLibraryUsageDescription": "TaxTrack accesses your photo library to let you attach photos of travel documents as evidence."
+      }
+    },
+    "android": {
+      "package": "com.taxtrack.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0C0C0E"
+      },
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "TaxTrack uses your location to automatically log which tax jurisdiction you are in for compliance tracking.",
+          "locationAlwaysPermission": "TaxTrack uses your background location to log your jurisdiction throughout the day.",
+          "locationWhenInUsePermission": "TaxTrack uses your location to log which jurisdiction you are in."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "TaxTrack accesses your photos to let you attach travel documents.",
+          "cameraPermission": "TaxTrack uses your camera to capture travel documents."
+        }
+      ]
+    ],
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
