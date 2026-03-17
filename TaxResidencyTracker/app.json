@@ -16,11 +16,24 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.taxtrack.app",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "TaxTrack uses your location to automatically log which tax jurisdiction you are in, helping you track days for tax compliance purposes.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "TaxTrack uses your background location to log your jurisdiction throughout the day, even when the app is not open.",
-        "NSLocationAlwaysUsageDescription": "TaxTrack uses your background location to log your jurisdiction throughout the day for tax compliance tracking.",
+        "NSLocationWhenInUseUsageDescription": "TaxTrack uses your location to automatically log which tax jurisdiction you are in for compliance tracking.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "TaxTrack uses your background location to log your jurisdiction every 5 minutes throughout the day, even when the app is not open. This is required for accurate tax day counting.",
+        "NSLocationAlwaysUsageDescription": "TaxTrack uses your background location to log your jurisdiction every 5 minutes for tax compliance tracking.",
         "NSCameraUsageDescription": "TaxTrack uses your camera to capture photos of boarding passes, hotel confirmations, and other travel evidence.",
-        "NSPhotoLibraryUsageDescription": "TaxTrack accesses your photo library to let you attach photos of travel documents as evidence."
+        "NSPhotoLibraryUsageDescription": "TaxTrack accesses your photo library to let you attach photos of travel documents as evidence.",
+        "UIBackgroundModes": ["location", "fetch", "processing"],
+        "BGTaskSchedulerPermittedIdentifiers": ["taxtrack-background-location"],
+        "NSUbiquitousContainers": {
+          "iCloud.com.taxtrack.app": {
+            "NSUbiquitousContainerIsDocumentScopePublic": true,
+            "NSUbiquitousContainerName": "TaxTrack",
+            "NSUbiquitousContainerSupportedFolderLevels": "Any"
+          }
+        }
+      },
+      "entitlements": {
+        "com.apple.developer.icloud-container-identifiers": ["iCloud.com.taxtrack.app"],
+        "com.apple.developer.ubiquity-kvstore-identifier": "$(TeamIdentifierPrefix)com.taxtrack.app"
       }
     },
     "android": {
@@ -33,16 +46,39 @@
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.ACCESS_BACKGROUND_LOCATION",
         "android.permission.CAMERA",
-        "android.permission.READ_EXTERNAL_STORAGE"
-      ]
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_LOCATION",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"
+      ],
+      "allowBackup": true,
+      "fullBackupContent": {
+        "include": [
+          {
+            "domain": "database",
+            "path": "."
+          },
+          {
+            "domain": "sharedpref",
+            "path": "."
+          },
+          {
+            "domain": "file",
+            "path": "TaxTrackBackups"
+          }
+        ]
+      }
     },
     "plugins": [
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "TaxTrack uses your location to automatically log which tax jurisdiction you are in for compliance tracking.",
-          "locationAlwaysPermission": "TaxTrack uses your background location to log your jurisdiction throughout the day.",
-          "locationWhenInUsePermission": "TaxTrack uses your location to log which jurisdiction you are in."
+          "locationAlwaysAndWhenInUsePermission": "TaxTrack uses your location every 5 minutes to log which tax jurisdiction you are in — even in the background — for accurate tax compliance tracking.",
+          "locationAlwaysPermission": "TaxTrack uses your background location every 5 minutes to log your jurisdiction for tax compliance.",
+          "locationWhenInUsePermission": "TaxTrack uses your location to log which jurisdiction you are in.",
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": true
         }
       ],
       [
@@ -51,6 +87,9 @@
           "photosPermission": "TaxTrack accesses your photos to let you attach travel documents.",
           "cameraPermission": "TaxTrack uses your camera to capture travel documents."
         }
+      ],
+      [
+        "expo-task-manager"
       ]
     ],
     "web": {

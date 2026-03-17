@@ -1,8 +1,9 @@
-import { registerRootComponent } from 'expo';
+// IMPORTANT: BackgroundLocationTask must be imported FIRST — before registerRootComponent —
+// so that TaskManager.defineTask() is called at module-load time, which is required
+// by expo-task-manager for the background task to be recognized by the OS.
+import './src/services/BackgroundLocationTask';
 
+import { registerRootComponent } from 'expo';
 import App from './App';
 
-// registerRootComponent calls AppRegistry.registerComponent('main', () => App);
-// It also ensures that whether you load the app in Expo Go or in a native build,
-// the environment is set up appropriately
 registerRootComponent(App);

@@ -20,6 +20,7 @@ import CalendarScreen from '../screens/calendar/CalendarScreen';
 import TaxPlanningScreen from '../screens/planning/TaxPlanningScreen';
 import DocumentsScreen from '../screens/documents/DocumentsScreen';
 import SettingsScreen from '../screens/settings/SettingsScreen';
+import MapScreen from '../screens/map/MapScreen';
 
 // Detail Screens
 import JurisdictionDetailScreen from '../screens/dashboard/JurisdictionDetailScreen';
@@ -30,6 +31,7 @@ import AddDocumentScreen from '../screens/documents/AddDocumentScreen';
 import ManageJurisdictionsScreen from '../screens/settings/ManageJurisdictionsScreen';
 import JurisdictionEditScreen from '../screens/settings/JurisdictionEditScreen';
 import ImportDataScreen from '../screens/settings/ImportDataScreen';
+import BackupScreen from '../screens/settings/BackupScreen';
 
 const RootStack = createNativeStackNavigator();
 const OnboardingStack = createNativeStackNavigator();
@@ -86,6 +88,7 @@ function SettingsNavigator() {
       <SettingsStack.Screen name="ManageJurisdictions" component={ManageJurisdictionsScreen} />
       <SettingsStack.Screen name="JurisdictionEdit" component={JurisdictionEditScreen} />
       <SettingsStack.Screen name="ImportData" component={ImportDataScreen} />
+      <SettingsStack.Screen name="Backup" component={BackupScreen} />
     </SettingsStack.Navigator>
   );
 }
@@ -131,6 +134,15 @@ function MainNavigator() {
         }}
       />
       <Tab.Screen
+        name="Map"
+        component={MapScreen}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <TabIcon name={focused ? 'map' : 'map-outline'} focused={focused} label="Map" />
+          ),
+        }}
+      />
+      <Tab.Screen
         name="Planning"
         component={TaxPlanningScreen}
         options={{
@@ -163,7 +175,6 @@ function MainNavigator() {
 
 export default function AppNavigator() {
   const { userProfile, hasHydrated } = useAppStore();
-
   if (!hasHydrated) return null;
 
   return (
@@ -194,7 +205,7 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   tabLabel: {
-    fontSize: 10,
+    fontSize: 9,
     color: Colors.textTertiary,
     fontWeight: '500',
   },

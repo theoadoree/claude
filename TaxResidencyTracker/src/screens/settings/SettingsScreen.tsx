@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Switch,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Switch, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -8,6 +8,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { Colors, Typography, Spacing, BorderRadius } from '../../theme';
 import { useAppStore } from '../../store';
+import {
+  startBackgroundTracking,
+  stopBackgroundTracking,
+  isTrackingActive,
+  requestDisableBatteryOptimization,
+  showIosLowPowerModeWarning,
+} from '../../services/BackgroundLocationService';
 
 function SettingRow({
   icon, color, label, subtitle, value, onPress, rightComponent, chevron = true,
@@ -37,6 +44,26 @@ function SettingRow({
 export default function SettingsScreen() {
   const navigation = useNavigation<any>();
   const { userProfile, updateUserProfile, jurisdictions, yearSummary, clearAll, selectedYear } = useAppStore();
+  const [trackingLive, setTrackingLive] = useState(false);
+
+  useEffect(() => {
+    isTrackingActive().then(setTrackingLive);
+  }, []);
+
+  const handleTrackingToggle = async (value: boolean) => {
+    await updateUserProfile({ trackingEnabled: value });
+    if (value) {
+      const started = await startBackgroundTracking();
+      setTrackingLive(started);
+      if (started) {
+        if (Platform.OS === 'android') requestDisableBatteryOptimization();
+        if (Platform.OS === 'ios') showIosLowPowerModeWarning();
+      }
+    } else {
+      await stopBackgroundTracking();
+      setTrackingLive(false);
+    }
+  };
 
   const handleClearData = () => {
     Alert.alert(
@@ -108,29 +135,53 @@ export default function SettingsScreen() {
               <SettingRow
                 icon="location"
                 color={Colors.primary}
-                label="Location Tracking"
-                subtitle="Auto-detect your jurisdiction daily"
+                label="Background Tracking"
+                subtitle={trackingLive ? '🟢 Active — logging every 5 min' : 'Auto-detect jurisdiction every 5 minutes'}
                 chevron={false}
                 rightComponent={
                   <Switch
                     value={userProfile?.trackingEnabled ?? false}
-                    onValueChange={toggleTracking}
+                    onValueChange={handleTrackingToggle}
                     trackColor={{ false: Colors.backgroundTertiary, true: Colors.primary + '50' }}
                     thumbColor={userProfile?.trackingEnabled ? Colors.primary : Colors.textTertiary}
                   />
                 }
               />
               <View style={styles.separator} />
+              {Platform.OS === 'android' && (
+                <>
+                  <SettingRow
+                    icon="battery-charging"
+                    color={Colors.accent}
+                    label="Battery Optimization"
+                    subtitle="Disable to ensure 5-min tracking works"
+                    onPress={requestDisableBatteryOptimization}
+                  />
+                  <View style={styles.separator} />
+                </>
+              )}
+              {Platform.OS === 'ios' && (
+                <>
+                  <SettingRow
+                    icon="battery-half"
+                    color={Colors.accent}
+                    label="Low Power Mode"
+                    subtitle="Disable for uninterrupted 5-min tracking"
+                    onPress={showIosLowPowerModeWarning}
+                  />
+                  <View style={styles.separator} />
+                </>
+              )}
               <SettingRow
                 icon="notifications"
-                color={Colors.accent}
+                color={Colors.riskModerate}
                 label="Day Limit Alerts"
                 subtitle="Warn when approaching jurisdiction limits"
                 chevron={false}
                 rightComponent={
                   <Switch
                     value={userProfile?.notificationsEnabled ?? false}
-                    onValueChange={toggleNotifications}
+                    onValueChange={async (v) => updateUserProfile({ notificationsEnabled: v })}
                     trackColor={{ false: Colors.backgroundTertiary, true: Colors.primary + '50' }}
                     thumbColor={userProfile?.notificationsEnabled ? Colors.primary : Colors.textTertiary}
                   />
@@ -166,11 +217,11 @@ export default function SettingsScreen() {
               />
               <View style={styles.separator} />
               <SettingRow
-                icon="cloud-download"
+                icon="server"
                 color={Colors.primary}
-                label="Export Data"
-                subtitle="Export your location data as CSV"
-                onPress={() => Alert.alert('Export', 'Data export feature coming soon')}
+                label="Backup & Restore"
+                subtitle="iCloud / Google Drive backup + local snapshots"
+                onPress={() => navigation.navigate('Backup')}
               />
               <View style={styles.separator} />
               <SettingRow
