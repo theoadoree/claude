@@ -1,0 +1,280 @@
+================================================================================
+TAXTRACK - PROJECT SUMMARY
+================================================================================
+Generated: 2026-04-29
+Branch: claude/tax-location-tracking-app-m6wwQ
+GitHub: https://github.com/theoadoree/claude/tree/claude/tax-location-tracking-app-m6wwQ
+================================================================================
+
+OVERVIEW
+--------
+TaxTrack is a native iOS + Android tax residency tracking app. It automatically
+monitors your physical location across tax jurisdictions, counts days spent in
+each, tracks the 183-day rule and similar thresholds, scores your audit risk,
+and stores supporting documents as an evidence vault.
+
+The original React Native / Expo project (TaxResidencyTracker/) was fully
+replaced with native iOS (SwiftUI) and Android (Kotlin/Jetpack Compose) apps.
+The RN folder has been permanently deleted.
+
+
+================================================================================
+WHERE TO FIND FILES
+================================================================================
+
+ON THE CLAUDE CODE SERVER (remote, always up to date):
+  /home/user/claude/ios/         -- iOS SwiftUI project
+  /home/user/claude/android/     -- Android Kotlin project
+  /home/user/claude/PROJECT_SUMMARY.txt  -- this file
+
+ON GITHUB:
+  https://github.com/theoadoree/claude
+  Branch: claude/tax-location-tracking-app-m6wwQ
+  Folders: ios/  and  android/
+
+ON YOUR MAC (after cloning):
+  ~/claude/ios/
+  ~/claude/android/
+
+TO OPEN iOS IN XCODE:
+  cd ~/claude/ios
+  brew install xcodegen        # if not already installed
+  xcodegen generate
+  open TaxTrack.xcodeproj
+
+TO OPEN ANDROID IN ANDROID STUDIO:
+  Open the ~/claude/android/ folder directly in Android Studio.
+
+
+================================================================================
+iOS PROJECT STRUCTURE
+================================================================================
+
+Root: ios/
+  project.yml                  -- XcodeGen config (generates .xcodeproj)
+  TaxTrack/
+    App/
+      TaxTrackApp.swift        -- @main entry, RootView, MainTabView, AppColors
+    Models/
+      Models.swift             -- All data types (LocationEntry, Jurisdiction,
+                                  Document, TaxRule, AuditRisk, etc.)
+    Storage/
+      DataStore.swift          -- ObservableObject, UserDefaults persistence,
+                                  all CRUD, CSV import, JSON backup/restore
+    Services/
+      LocationService.swift    -- CLLocationManager, background tracking,
+                                  reverse geocoding, jurisdiction detection
+      TaxCalculationService.swift -- 183-day counting, audit risk scoring,
+                                     insight generation
+    Views/
+      Onboarding/
+        OnboardingView.swift   -- Welcome, profile setup, jurisdiction picker,
+                                  location permission request
+      Dashboard/
+        DashboardView.swift    -- Main screen: live tracking badge, year overview,
+                                  risk gauge, jurisdiction cards, quick actions
+        JurisdictionDetailView.swift -- Per-jurisdiction detail: day count,
+                                        monthly breakdown bar chart, entry list
+      Calendar/
+        CalendarView.swift     -- Monthly grid, bar indicators, day detail sheet,
+                                  jurisdiction legend
+        AddLocationView.swift  -- Add/edit location entry form
+      Map/
+        MapView.swift          -- MapKit map with colored jurisdiction pins,
+                                  filter chips, entry detail sheet
+      Planning/
+        PlanningView.swift     -- Insights tab, Opportunities tab, Risk Analysis tab
+      Documents/
+        DocumentsView.swift    -- Document list with search and filter
+        AddDocumentView.swift  -- Camera/photo library picker, type/date/notes
+      Settings/
+        SettingsView.swift     -- Profile, tracking toggle, data import/export,
+                                  clear all
+        ManageJurisdictionsView.swift -- Toggle/edit/delete jurisdictions,
+                                         add custom jurisdictions
+    Resources/
+      Info.plist               -- NSLocation* keys, UIBackgroundModes, camera/photos
+      Assets.xcassets/         -- AppIcon + AccentColor (#0A84FF)
+
+
+================================================================================
+ANDROID PROJECT STRUCTURE
+================================================================================
+
+Root: android/
+  settings.gradle.kts
+  build.gradle.kts
+  gradle/libs.versions.toml    -- compileSdk 35, minSdk 26, Compose BOM 2024.12
+  app/src/main/
+    AndroidManifest.xml        -- All permissions, ForegroundService, FileProvider
+    java/com/taxtrack/app/
+      data/
+        models/Models.kt       -- All data classes
+        repository/AppRepository.kt -- SharedPreferences + Gson, CSV import,
+                                       JSON backup
+      services/
+        TaxCalculationService.kt
+        LocationTrackingService.kt -- ForegroundService + FusedLocationProvider,
+                                      persistent notification, BootReceiver
+      viewmodels/
+        AppViewModel.kt        -- AndroidViewModel, StateFlow<AppState>
+      ui/
+        TaxTrackApp.kt         -- NavHost + BottomNavigationBar, onboarding gate
+        dashboard/DashboardScreen.kt
+        calendar/CalendarScreen.kt
+        calendar/AddLocationScreen.kt
+        map/MapScreen.kt       -- Google Maps Compose
+        planning/PlanningScreen.kt
+        documents/DocumentsScreen.kt
+        settings/SettingsScreen.kt
+        theme/Color.kt + Theme.kt -- Dark MaterialTheme matching iOS palette
+
+
+================================================================================
+KEY FEATURES
+================================================================================
+
+LOCATION TRACKING
+  iOS:     CLLocationManager, allowsBackgroundLocationUpdates=true,
+           5-minute interval, CLGeocoder reverse geocoding
+  Android: FusedLocationProviderClient, 300s interval, Geocoder,
+           ForegroundService with persistent notification
+
+DATA MODEL
+  LocationEntry  -- date (yyyy-MM-dd), jurisdictionId, city/state/country,
+                    lat/lon, activityType, isVerified, source, notes
+  Jurisdiction   -- name, type, color (hex), dayLimit, taxRule, isTracked,
+                    isPrimary
+  Document       -- type, title, date, imageData (JPEG), notes, extractedData
+  UserProfile    -- name, primaryJurisdictionId, trackedJurisdictionIds,
+                    hasCompletedOnboarding
+
+TAX ENGINE
+  - Counts unique days per jurisdiction per year
+  - 183-day rule default (configurable per jurisdiction)
+  - Audit risk score: starts at 100, deductions for threshold violations,
+    bonus for high verification rate
+  - Planning insights: compliance alerts, domicile opportunities, PR Act 60,
+    FEIE exclusion
+
+PERSISTENCE
+  iOS:     UserDefaults + JSON (Codable)
+  Android: SharedPreferences + Gson
+
+IMPORT / EXPORT
+  - CSV import: Monaeo-compatible format
+  - JSON backup export (share sheet / Files)
+  - JSON backup import (file picker)
+
+DEFAULT JURISDICTIONS (14)
+  New York (183d), California (183d), New Jersey (183d), Illinois (183d),
+  Massachusetts (183d), Pennsylvania (183d), Connecticut (183d),
+  Florida (366d), Texas (366d), Nevada (366d), Washington (366d),
+  Puerto Rico (183d), US Federal (183d), United Kingdom (183d)
+
+
+================================================================================
+UI DESIGN SYSTEM
+================================================================================
+
+Color Palette (dark mode only):
+  Background:       #0C0C0E
+  Surface:          #1C1C1E
+  Surface Secondary:#2C2C2E
+  Primary (blue):   #0A84FF
+  Secondary (green):#30D158
+  Accent (orange):  #FF9F0A
+  Risk High (red):  #FF453A
+  Risk Critical:    #8E2929
+
+Typography: SF Pro (system font), size 11–52pt
+Corner Radius: 8pt (cells), 10–12pt (rows), 14–16pt (cards)
+
+
+================================================================================
+BUG FIXES APPLIED
+================================================================================
+
+1. LocationEntry missing Hashable conformance
+   File: ios/TaxTrack/Models/Models.swift
+   Fix:  Added Hashable to LocationEntry protocol list; required by iOS 17
+         Map(position:selection:) API
+
+2. Broken DateFormatter in updateDefaultTitle()
+   File: ios/TaxTrack/Views/Documents/AddDocumentView.swift
+   Fix:  Was using DateFormatter() with no dateFormat set (could not parse
+         "yyyy-MM-dd" strings). Added explicit dateFormat = "yyyy-MM-dd" on
+         input formatter and "MMM d, yyyy" on output formatter.
+
+3. Unused showingEntryDetail state in MapView
+   File: ios/TaxTrack/Views/Map/MapView.swift
+   Fix:  Removed dead state variable; sheet was already controlled by
+         sheet(item: $selectedEntry)
+
+4. Missing Assets.xcassets
+   File: ios/TaxTrack/Resources/Assets.xcassets/
+   Fix:  Created AppIcon.appiconset (universal 1024x1024 placeholder) and
+         AccentColor.colorset (#0A84FF); required for Xcode to build without
+         ASSETCATALOG_COMPILER errors
+
+
+================================================================================
+UI/UX POLISH (latest commit)
+================================================================================
+
+DashboardView:
+  - Pulsing "Live" tracking badge with radial animation
+  - Gradient progress bar (blue→green) with spring animation
+  - Jurisdiction cards: left-color-accent border, warning zone overlay on
+    progress bar (red tint at 85–100%), animated numeric transitions
+  - Quick action buttons show subtitles ("Log location", "Evidence vault")
+
+CalendarView:
+  - Circular nav buttons with blue tint; tap month/year to jump to today
+  - Day cells use a bottom bar indicator (3px) instead of a dot
+  - Future days are visually dimmed
+  - Legend uses rectangular bar shapes matching cell indicators
+
+JurisdictionDetailView:
+  - Red-tinted danger zone overlay on progress bar (85–100% range)
+  - Big day count uses contentTransition(.numericText()) animation
+
+AddLocationView / AddDocumentView:
+  - TextEditor placeholder text when notes field is empty
+
+
+================================================================================
+GIT LOG (recent)
+================================================================================
+
+  77c52df  UI/UX production polish: animations, improved layouts, visual hierarchy
+  258cd37  (previous commits — iOS/Android native rewrite, bug fixes, assets)
+
+
+================================================================================
+HOW TO BUILD & RUN
+================================================================================
+
+iOS (requires macOS + Xcode 15+):
+  1. git clone https://github.com/theoadoree/claude
+  2. cd claude
+  3. git checkout claude/tax-location-tracking-app-m6wwQ
+  4. cd ios
+  5. brew install xcodegen
+  6. xcodegen generate
+  7. open TaxTrack.xcodeproj
+  8. Select your device/simulator, press Run (Cmd+R)
+  NOTE: Background location requires a physical device (not simulator)
+
+Android (requires Android Studio Hedgehog+):
+  1. Clone repo as above
+  2. Open android/ folder in Android Studio
+  3. Let Gradle sync complete
+  4. Run on emulator or device
+  NOTE: Background location on Android 10+ requires granting "Allow all the
+        time" in system settings after the in-app prompt
+
+
+================================================================================
+END OF SUMMARY
+================================================================================
