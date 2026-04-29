@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TaxTrack</string>
+    <string name="app_description">Tax Residency Location Tracker</string>
+
+    <!-- Navigation -->
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_calendar">Calendar</string>
+    <string name="nav_map">Map</string>
+    <string name="nav_planning">Planning</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome_title">TaxTrack</string>
+    <string name="onboarding_welcome_subtitle">Track your physical presence across tax jurisdictions. Stay compliant and reduce audit risk.</string>
+    <string name="onboarding_get_started">Get Started</string>
+    <string name="onboarding_name_title">What\'s your name?</string>
+    <string name="onboarding_name_hint">Your Name</string>
+    <string name="onboarding_residency_title">Primary Residence</string>
+    <string name="onboarding_residency_subtitle">Where do you claim domicile?</string>
+    <string name="onboarding_jurisdictions_title">Track Jurisdictions</string>
+    <string name="onboarding_jurisdictions_subtitle">Select states/countries you frequently visit</string>
+    <string name="onboarding_permissions_title">Enable Location Tracking</string>
+    <string name="onboarding_permissions_subtitle">Allow TaxTrack to automatically record your location</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_title">Dashboard</string>
+    <string name="dashboard_year_overview">Year at a Glance</string>
+    <string name="dashboard_audit_risk">Audit Risk Score</string>
+    <string name="dashboard_jurisdiction_overview">Jurisdiction Overview</string>
+    <string name="dashboard_quick_actions">Quick Actions</string>
+    <string name="dashboard_logged_days">Logged Days</string>
+    <string name="dashboard_verified">Verified</string>
+    <string name="dashboard_missing">Missing</string>
+    <string name="dashboard_total">Total</string>
+
+    <!-- Calendar -->
+    <string name="calendar_title">Calendar</string>
+    <string name="calendar_add_entry">Add Entry</string>
+    <string name="calendar_no_entries">No entries for this day</string>
+    <string name="calendar_add_location">Add Location Entry</string>
+
+    <!-- Map -->
+    <string name="map_title">Location Map</string>
+    <string name="map_history">Location History</string>
+    <string name="map_no_data">No GPS Data Yet</string>
+    <string name="map_no_data_description">Enable background location tracking to automatically record GPS coordinates.</string>
+
+    <!-- Planning -->
+    <string name="planning_title">Tax Planning</string>
+    <string name="planning_insights">Insights</string>
+    <string name="planning_opportunities">Opportunities</string>
+    <string name="planning_risk_analysis">Risk Analysis</string>
+
+    <!-- Documents -->
+    <string name="documents_title">Evidence Vault</string>
+    <string name="documents_empty_title">Evidence Vault is Empty</string>
+    <string name="documents_empty_description">Store boarding passes, hotel receipts, and photos to verify your location.</string>
+    <string name="documents_add">Add Document</string>
+    <string name="documents_take_photo">Take Photo</string>
+    <string name="documents_choose_gallery">Choose from Gallery</string>
+    <string name="documents_add_note">Add Note</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_profile">Profile</string>
+    <string name="settings_tracking">Location Tracking</string>
+    <string name="settings_background_tracking">Background Tracking</string>
+    <string name="settings_battery_optimization">Battery Optimization</string>
+    <string name="settings_jurisdictions">Jurisdictions</string>
+    <string name="settings_manage_jurisdictions">Manage Jurisdictions</string>
+    <string name="settings_data_management">Data Management</string>
+    <string name="settings_import_csv">Import CSV</string>
+    <string name="settings_export_backup">Export Backup</string>
+    <string name="settings_restore_backup">Restore Backup</string>
+    <string name="settings_clear_data">Clear All Data</string>
+    <string name="settings_clear_data_confirm">This will permanently delete all location entries, documents, and settings. This action cannot be undone.</string>
+    <string name="settings_danger_zone">Danger Zone</string>
+    <string name="settings_statistics">Statistics</string>
+
+    <!-- Risk levels -->
+    <string name="risk_low">Low Risk</string>
+    <string name="risk_moderate">Moderate Risk</string>
+    <string name="risk_high">High Risk</string>
+    <string name="risk_critical">Critical Risk</string>
+
+    <!-- Activity types -->
+    <string name="activity_work">Work</string>
+    <string name="activity_personal">Personal</string>
+    <string name="activity_transit">Transit</string>
+    <string name="activity_unknown">Unknown</string>
+
+    <!-- Document types -->
+    <string name="doc_flight">Flight</string>
+    <string name="doc_hotel">Hotel</string>
+    <string name="doc_receipt">Receipt</string>
+    <string name="doc_photo">Photo</string>
+    <string name="doc_other">Other</string>
+
+    <!-- Location tracking service -->
+    <string name="tracking_notification_title">TaxTrack</string>
+    <string name="tracking_notification_text">Tracking your location for tax residency</string>
+    <string name="tracking_notification_channel">TaxTrack Location</string>
+    <string name="tracking_stop">Stop Tracking</string>
+
+    <!-- Common -->
+    <string name="continue_text">Continue</string>
+    <string name="back">Back</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="verify">Verify</string>
+    <string name="ok">OK</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="skip">Skip</string>
+    <string name="done">Done</string>
+    <string name="error">Error</string>
+    <string name="success">Success</string>
+</resources>
