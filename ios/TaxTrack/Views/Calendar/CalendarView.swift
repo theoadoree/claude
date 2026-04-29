@@ -20,17 +20,14 @@ struct CalendarView: View {
                 AppColors.background.ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    // Month Navigation
                     MonthNavigationHeader(displayedMonth: $displayedMonth)
                         .padding(.horizontal, 16)
                         .padding(.top, 8)
 
-                    // Day of week headers
                     DayOfWeekRow()
                         .padding(.horizontal, 16)
                         .padding(.top, 12)
 
-                    // Calendar Grid
                     CalendarGrid(
                         displayedMonth: displayedMonth,
                         selectedDate: $selectedDate,
@@ -42,7 +39,6 @@ struct CalendarView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 4)
 
-                    // Legend
                     JurisdictionLegend()
                         .padding(.horizontal, 16)
                         .padding(.top, 12)
@@ -83,8 +79,19 @@ struct CalendarView: View {
 // MARK: - Month Navigation Header
 struct MonthNavigationHeader: View {
     @Binding var displayedMonth: Date
-
     private var calendar: Calendar { Calendar.current }
+
+    private var monthString: String {
+        let f = DateFormatter()
+        f.dateFormat = "MMMM"
+        return f.string(from: displayedMonth)
+    }
+
+    private var yearString: String {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy"
+        return f.string(from: displayedMonth)
+    }
 
     var body: some View {
         HStack {
@@ -94,16 +101,29 @@ struct MonthNavigationHeader: View {
                 }
             } label: {
                 Image(systemName: "chevron.left")
+                    .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(AppColors.primary)
-                    .frame(width: 40, height: 40)
+                    .frame(width: 36, height: 36)
+                    .background(AppColors.primary.opacity(0.12))
+                    .clipShape(Circle())
             }
 
             Spacer()
 
-            Text(monthYearString(displayedMonth))
-                .font(.title3)
-                .fontWeight(.semibold)
-                .foregroundColor(.white)
+            VStack(spacing: 1) {
+                Text(monthString)
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                Text(yearString)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            .onTapGesture {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    displayedMonth = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Date())) ?? Date()
+                }
+            }
 
             Spacer()
 
@@ -113,16 +133,13 @@ struct MonthNavigationHeader: View {
                 }
             } label: {
                 Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(AppColors.primary)
-                    .frame(width: 40, height: 40)
+                    .frame(width: 36, height: 36)
+                    .background(AppColors.primary.opacity(0.12))
+                    .clipShape(Circle())
             }
         }
-    }
-
-    private func monthYearString(_ date: Date) -> String {
-        let f = DateFormatter()
-        f.dateFormat = "MMMM yyyy"
-        return f.string(from: date)
     }
 }
 
@@ -136,7 +153,7 @@ struct DayOfWeekRow: View {
                 Text(day)
                     .font(.caption2)
                     .fontWeight(.medium)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color.secondary.opacity(0.7))
                     .frame(maxWidth: .infinity)
             }
         }
@@ -166,7 +183,6 @@ struct CalendarGrid: View {
                 days.append(date)
             }
         }
-        // Pad to complete grid
         while days.count % 7 != 0 {
             days.append(nil)
         }
@@ -174,9 +190,9 @@ struct CalendarGrid: View {
     }
 
     private var entriesByDate: [String: LocationEntry] {
+        var dict: [String: LocationEntry] = [:]
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd"
-        var dict: [String: LocationEntry] = [:]
         for entry in store.entries {
             dict[entry.date] = entry
         }
@@ -197,9 +213,7 @@ struct CalendarGrid: View {
                             entry: date.flatMap { entryMap[dateString($0)] },
                             selectedDate: selectedDate,
                             onTap: {
-                                if let d = date {
-                                    onDayTap(dateString(d))
-                                }
+                                if let d = date { onDayTap(dateString(d)) }
                             }
                         )
                     }
@@ -228,6 +242,10 @@ struct CalendarDayCell: View {
         guard let d = date else { return false }
         return calendar.isDateInToday(d)
     }
+    private var isFuture: Bool {
+        guard let d = date else { return false }
+        return d > Date()
+    }
     private var dayNumber: String {
         guard let d = date else { return "" }
         return "\(calendar.component(.day, from: d))"
@@ -242,9 +260,7 @@ struct CalendarDayCell: View {
 
     private var jurisdictionColor: Color? {
         guard let entry = entry,
-              let jurisdiction = store.jurisdiction(for: entry.jurisdictionId) else {
-            return nil
-        }
+              let jurisdiction = store.jurisdiction(for: entry.jurisdictionId) else { return nil }
         return Color(hex: jurisdiction.color)
     }
 
@@ -254,22 +270,24 @@ struct CalendarDayCell: View {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(backgroundColor)
 
-                VStack(spacing: 2) {
+                VStack(spacing: 0) {
                     Text(dayNumber)
                         .font(.system(size: 14, weight: isToday ? .bold : .regular))
                         .foregroundColor(foregroundColor)
+                        .frame(maxHeight: .infinity)
 
-                    if jurisdictionColor != nil {
-                        Circle()
-                            .fill(jurisdictionColor!)
-                            .frame(width: 5, height: 5)
+                    // Bottom bar indicator
+                    if let jc = jurisdictionColor {
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(jc)
+                            .frame(height: 3)
+                            .padding(.horizontal, 6)
+                            .padding(.bottom, 4)
                     } else {
-                        Circle()
-                            .fill(Color.clear)
-                            .frame(width: 5, height: 5)
+                        Color.clear.frame(height: 7)
                     }
                 }
-                .padding(.vertical, 4)
+                .padding(.top, 4)
 
                 if isToday {
                     RoundedRectangle(cornerRadius: 8)
@@ -284,13 +302,14 @@ struct CalendarDayCell: View {
 
     private var backgroundColor: Color {
         guard date != nil else { return Color.clear }
-        if isSelected { return AppColors.primary.opacity(0.3) }
-        if let jc = jurisdictionColor { return jc.opacity(0.12) }
-        return AppColors.surface.opacity(0.5)
+        if isSelected { return AppColors.primary.opacity(0.25) }
+        if let jc = jurisdictionColor { return jc.opacity(isFuture ? 0.05 : 0.12) }
+        return AppColors.surface.opacity(isFuture ? 0.25 : 0.5)
     }
 
     private var foregroundColor: Color {
         guard date != nil else { return Color.clear }
+        if isFuture { return Color.secondary.opacity(0.4) }
         if isToday { return AppColors.primary }
         return .white
     }
@@ -445,12 +464,12 @@ struct JurisdictionLegend: View {
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 12) {
+            HStack(spacing: 14) {
                 ForEach(trackedJurisdictions) { j in
-                    HStack(spacing: 6) {
-                        Circle()
+                    HStack(spacing: 5) {
+                        RoundedRectangle(cornerRadius: 2)
                             .fill(Color(hex: j.color))
-                            .frame(width: 10, height: 10)
+                            .frame(width: 12, height: 4)
                         Text(j.name)
                             .font(.caption2)
                             .foregroundColor(.secondary)
@@ -461,7 +480,7 @@ struct JurisdictionLegend: View {
     }
 }
 
-// MARK: - Array chunked extension
+// MARK: - Array extensions
 extension Array {
     func chunked(into size: Int) -> [[Element]] {
         stride(from: 0, to: count, by: size).map {

@@ -80,21 +80,29 @@ struct JurisdictionDetailView: View {
                 Text("\(stat.daysSpent)")
                     .font(.system(size: 52, weight: .bold))
                     .foregroundColor(stat.riskLevel.color)
+                    .contentTransition(.numericText())
                 Text("/ \(stat.dayLimit) days")
                     .font(.title3)
                     .foregroundColor(.secondary)
                 Spacer()
             }
 
-            // Progress bar
+            // Progress bar with danger zone
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     RoundedRectangle(cornerRadius: 6)
-                        .fill(Color.gray.opacity(0.2))
+                        .fill(Color.gray.opacity(0.15))
                         .frame(height: 10)
+                    // Danger zone (85–100%)
+                    let dangerStart = min(0.85 * geo.size.width, geo.size.width)
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(AppColors.riskHigh.opacity(0.15))
+                        .frame(width: geo.size.width - dangerStart, height: 10)
+                        .offset(x: dangerStart)
                     RoundedRectangle(cornerRadius: 6)
                         .fill(stat.riskLevel.color)
-                        .frame(width: geo.size.width * stat.progressRatio, height: 10)
+                        .frame(width: min(geo.size.width * stat.progressRatio, geo.size.width), height: 10)
+                        .animation(.spring(response: 0.6), value: stat.progressRatio)
                 }
             }
             .frame(height: 10)

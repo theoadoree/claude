@@ -106,14 +106,24 @@ struct AddLocationView: View {
                         }
 
                         // Notes
-                        FormSection(title: "Notes") {
-                            TextEditor(text: $notes)
-                                .frame(minHeight: 80)
-                                .padding(10)
-                                .background(AppColors.surface)
-                                .cornerRadius(10)
-                                .foregroundColor(.white)
-                                .scrollContentBackground(.hidden)
+                        FormSection(title: "Notes (Optional)") {
+                            ZStack(alignment: .topLeading) {
+                                TextEditor(text: $notes)
+                                    .frame(minHeight: 80)
+                                    .padding(10)
+                                    .background(AppColors.surface)
+                                    .cornerRadius(10)
+                                    .foregroundColor(.white)
+                                    .scrollContentBackground(.hidden)
+                                if notes.isEmpty {
+                                    Text("Additional context, meeting details, etc.")
+                                        .font(.subheadline)
+                                        .foregroundColor(Color.secondary.opacity(0.5))
+                                        .padding(.horizontal, 14)
+                                        .padding(.vertical, 18)
+                                        .allowsHitTesting(false)
+                                }
+                            }
                         }
 
                         // Delete button (edit mode only)

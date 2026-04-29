@@ -59,13 +59,23 @@ struct AddDocumentView: View {
 
                         // Notes
                         FormSection(title: "Notes (Optional)") {
-                            TextEditor(text: $notes)
-                                .frame(minHeight: 80)
-                                .padding(10)
-                                .background(AppColors.surface)
-                                .cornerRadius(10)
-                                .foregroundColor(.white)
-                                .scrollContentBackground(.hidden)
+                            ZStack(alignment: .topLeading) {
+                                TextEditor(text: $notes)
+                                    .frame(minHeight: 80)
+                                    .padding(10)
+                                    .background(AppColors.surface)
+                                    .cornerRadius(10)
+                                    .foregroundColor(.white)
+                                    .scrollContentBackground(.hidden)
+                                if notes.isEmpty {
+                                    Text("Flight numbers, hotel confirmations, etc.")
+                                        .font(.subheadline)
+                                        .foregroundColor(Color.secondary.opacity(0.5))
+                                        .padding(.horizontal, 14)
+                                        .padding(.vertical, 18)
+                                        .allowsHitTesting(false)
+                                }
+                            }
                         }
 
                         Spacer(minLength: 32)

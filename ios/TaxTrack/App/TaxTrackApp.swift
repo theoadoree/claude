@@ -77,6 +77,7 @@ struct MainTabView: View {
 enum AppColors {
     static let background = Color(hex: "#0C0C0E")
     static let surface = Color(hex: "#1C1C1E")
+    static let surfaceSecondary = Color(hex: "#2C2C2E")
     static let primary = Color(hex: "#0A84FF")
     static let secondary = Color(hex: "#30D158")
     static let accent = Color(hex: "#FF9F0A")
